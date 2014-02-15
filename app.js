@@ -49,19 +49,25 @@ app.get('/', routes.index);
 
 
 io.configure(function(){
-    io.set('log level', 2);
+    io.set('log level', 1);
     io.set('authorization', function (handshakeData, callback) {
         callback(null, true); // error first callback style
         });
 });
 
+var game_server = require('./public/javascripts/game_server.js');
+
 io.sockets.on('connection', function (client) {
     client.userid = UUID();
     console.log('\t socket.io:: player ' + client.userid + ' connected');
-    client.emit('uid', { hello: client.userid });
+    client.emit('uid', { hello: client.id });
     
-    client.join('room1');
-    
+    client.join('lobby');
+
+    if (client.userid){
+        game_server.findGame(client);
+    }
+
     client.on('message', function(m) {
         console.log(m);
     });
@@ -72,13 +78,13 @@ io.sockets.on('connection', function (client) {
 
     client.on('button', function(m) {
         console.log(m + ' clicked by ' + client.userid);
-        client.broadcast.to('room1').emit('msg', m);
+        client.broadcast.to('lobby').emit('msg', m);
         client.emit('msg', m);
     });
 
     client.on('input', function(m) {
         console.log('recieved input ' + m + ' from ' +client.userid);
-        io.sockets.in('room1').emit('msg', m);
+        io.sockets.in('lobby').emit('msg', m);
         
     });
 });
