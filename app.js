@@ -24,18 +24,21 @@ server.listen(8080);
 // Configuration
 
 app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
 
-  //app.use(express.bodyParser());
-  //app.use(express.methodOverride());
-  //app.use(express.cookieParser());
-  //app.use(express.session({ secret: 'thesuperpassword' }));
-  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-  app.use(express.static(__dirname + '/javascripts'));
-  app.set('view options', {layout: false});
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(express.cookieParser());
+    app.use(express.session({ secret: 'thesuperpassword' }));
+    app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+    app.use(app.router);
+
+    app.use(express.errorHandler());
+    app.use(express.logger('dev'));
+    app.use(express.static(__dirname + '/public'));
+    app.use(express.static(__dirname + '/javascripts'));
+    app.set('view options', {layout: false});
 });
 
 // Routes
@@ -83,7 +86,7 @@ io.sockets.on('connection', function (client) {
         client.emit(client);
     });
 
-    client.on('input', function(m) {
+    client.on('nousenow', function(m) {
         console.log('recieved input ' + m + ' from ' +client.userid);
         io.sockets.in('lobby').emit('msg', m);
         

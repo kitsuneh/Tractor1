@@ -54,6 +54,7 @@ function Deck(){
     shuffle(deck);
     return deck;
 }
+
 function GameInfo(){
     this.dominantSuit = 'unknown';
     this.dominantRank = 2;
@@ -61,28 +62,47 @@ function GameInfo(){
 
 }
 
-function Dealing(players,gameInfo){
+function Dealing(players, gameInfo){
     var deck= Deck();
     //console.log(deck);
     //console.log(deck.length);
     var n = deck.length;
     var i = gameInfo.starter;
-    while(n > 0){
-        n = n-1;
+
+    var de = setInterval(function(){
+
+        n -= 1;
         i = i%4;
         players[i].cards.push(deck[n]);
+        players[i].emit('newcard', deck[n]);
         //TODO: determining the dominant suit and rank
         i = i +1;
-    }
-    for(var j = 0 ; j<4; j++){
-        console.log(players[j].cards.length)
-        players[j].emit('mycards', players[j].cards);
-    }
+        if (n === 0){
+            clearInterval(de);
+            for(var j = 0 ; j<4; j++){
+                console.log(players[j].cards.length)
+                //players[j].emit('mycards', players[j].cards);
+            }
+            playing(players);
+        }
+
+
+    },30)
 }
 
 
 function playing(players){
     console.log('OK. please start your trick');
+
+    for (var i =0; i < 4; i++){
+        player = players[i];
+        player.on('usecard', function(m) {
+             console.log('gamecore:: ' + player.userid + ' used card ' + m.suit + ' ' + m.value);
+        })
+    };
+    setInterval(function(){
+
+    },50)
 
 }
 
@@ -93,8 +113,7 @@ function updateScore(players){
 
 function One_game(players,gameInfo){
     Dealing(players,gameInfo);
-    playing(players);
-    updateScore(players);
+   // updateScore(players);
 }
 
 

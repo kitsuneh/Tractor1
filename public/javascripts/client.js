@@ -1,4 +1,6 @@
 
+var mycards = [];
+
 function connect_to_server ()
 {
     socket = io.connect();
@@ -20,9 +22,19 @@ function connect_to_server ()
         $('#servermsg').text('server said ' + message);
     })
 
-    socket.on('mycards', function(message) {
-        $('#servermsg').text('I got cards ' + message);
-        console.log(message);
+    socket.on('newcard', function(message) {
+        mycards.push(message);
+        $('#servermsg').text('I got card ' + message.suit+' ' + message.value);
+        //console.log(message.value);
+        console.log(mycards.length);
+        if (mycards.length === 27){
+           // $('#servermsg').text(mycards.valu);
+            var ccc = '';
+            for (var i = 0; i < 27; i++){
+                ccc += (mycards[i].suit + ' '+ mycards[i].value + ' , ' )
+            }
+            $('#servermsg').text(ccc);
+        }
     })
 }
 

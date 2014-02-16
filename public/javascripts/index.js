@@ -18,13 +18,17 @@ $(document).ready(function(){
     });
     
     $('#inputbutton').click(function() {
-        send_msg ('input', $('#input1').val());
+        var res = $('#input1').val().split(' ');
+        var cd = {suit: res[0], value: res[1]};
+        send_msg ('usecard', cd);
         $('#input1').val('')
     })
     $('#input1').keypress(function(k) {
         if (k.which === 13)
         {
-             send_msg ('input', $('#input1').val());
+            var res = $('#input1').val().split(' ');
+            var cd = {suit: res[0], value: res[1]};
+            send_msg ('usecard', cd);
             $('#input1').val('')
         }
         
