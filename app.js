@@ -80,6 +80,7 @@ io.sockets.on('connection', function (client) {
         console.log(m + ' clicked by ' + client.userid);
         client.broadcast.to('lobby').emit('msg', m);
         client.emit('msg', m);
+        client.emit(client);
     });
 
     client.on('input', function(m) {

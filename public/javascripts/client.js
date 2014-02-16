@@ -19,6 +19,11 @@ function connect_to_server ()
     socket.on('message', function(message) {
         $('#servermsg').text('server said ' + message);
     })
+
+    socket.on('mycards', function(message) {
+        $('#servermsg').text('I got cards ' + message);
+        console.log(message);
+    })
 }
 
 

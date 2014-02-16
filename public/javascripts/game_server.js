@@ -61,9 +61,11 @@ game_server.createGame = function(player) {
     return game_instance;
 }
 
+require('./game.core.js');
+
 game_server.startGame = function(game_instance, player){
     player.broadcast.to(game_instance.id).send('Game Start Now!!!');
     player.send('Game Start Now!!!');
     console.log('Game Start Now!!!');
-
+    game_core(game_instance);
 }
