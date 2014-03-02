@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -13,13 +12,14 @@
 // var io = require('socket.io').listen(server);
 
 var express = require('express')
-  , http = require('http')
-  , UUID = require('node-uuid');
+    , http = require('http')
+    , UUID = require('node-uuid');
 
 var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-var routes = require('./routes')
+var routes = require('./routes');
+var room = require('./routes/room.js');
 server.listen(8080);
 // Configuration
 
@@ -44,7 +44,7 @@ app.configure(function(){
 // Routes
 
 app.get('/', routes.index);
-
+app.get('/room1', room.room1);
 
 
 //app.listen(process.env.PORT);
@@ -55,16 +55,16 @@ io.configure(function(){
     io.set('log level', 1);
     io.set('authorization', function (handshakeData, callback) {
         callback(null, true); // error first callback style
-        });
+    });
 });
 
-var game_server = require('./public/javascripts/game_server.js');
+var game_server = require('./public/javascripts/game.server.js');
 
 io.sockets.on('connection', function (client) {
     client.userid = UUID();
     console.log('\t socket.io:: player ' + client.userid + ' connected');
     client.emit('uid', { hello: client.id });
-    
+
     client.join('lobby');
 
     if (client.userid){
@@ -86,9 +86,10 @@ io.sockets.on('connection', function (client) {
         client.emit(client);
     });
 
+
     client.on('nousenow', function(m) {
         console.log('recieved input ' + m + ' from ' +client.userid);
         io.sockets.in('lobby').emit('msg', m);
-        
+
     });
 });
